@@ -144,7 +144,7 @@ public class FindDataByAPITest2 {
 		long temp2 = System.currentTimeMillis();
 		//20140707  測得10萬筆>>Create Data time: 19695 ms
 		//20140707 連到VM上>>Create Data time: 59903 ms
-		System.out.println("Create Data time: " + (temp2 - temp) + " ms");//Create 10萬筆資料所秏費時間
+		System.out.println("Create Data time: " + (temp2 - temp) + " ms");	//Create 10萬筆資料所秏費時間
 	}
 	
 	
