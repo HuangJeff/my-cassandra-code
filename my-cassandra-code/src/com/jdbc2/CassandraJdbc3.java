@@ -188,7 +188,7 @@ public class CassandraJdbc3 {
 	
 	//-----Table 系列-----
 	public static void createTable(Connection conn) throws SQLException {
-		String data= "CREATE Table myUsersTable(user_id varchar," +
+		String data= "CREATE Table myTestTable(user_id varchar," +
 				                 "user_name varchar," +
 				                 "password varchar," +
 				                 "gender varchar," +
@@ -212,18 +212,34 @@ public class CassandraJdbc3 {
         }
 	}
 	
+	/**
+	 * 似乎  Table格式(mytesttable)無法用insert into來新增資料
+	 * @param conn
+	 */
 	public static void insertIntoData(Connection conn) {
 		int iResult=0;
 		try {
-			String strQry = "INSERT INTO myUsersTable (user_id, user_name, gender) VALUES ('010571', 'Shihwen', 'M')";//insert
+//			String strQry = "INSERT INTO mytesttable (user_id, user_name, gender) VALUES ('010571', 'Shihwen', 'M')";//insert
 //			String strQry = "CREATE INDEX idxName ON myUsersTable (user_name);";//insert
 //			String strQry = "UPDATE myUsersTable SET user_name='shihwen' WHERE user_id='010571'";//update
 //			String strQry = "delete from myUsersTable WHERE user_id='010571'";//delete
 			
-			PreparedStatement statement = conn.prepareStatement(strQry);
-			iResult = statement.executeUpdate();
-			statement.close();
-			System.out.println("共儲存成功 " + iResult + " 筆。");
+//			PreparedStatement statement = conn.prepareStatement(strQry);
+//			iResult = statement.executeUpdate();
+//			statement.close();
+			
+			String data =
+					"BEGIN BATCH \n"+
+							"insert into mytesttable (user_id, user_name, gender) values ('010571', 'John', 'M') \n"+ 
+							"insert into mytesttable (user_id, user_name, gender) values ('010572', 'Shihwen', 'M') \n"+
+							"insert into mytesttable (user_id, user_name, gender) values ('010573', 'Alin', 'F') \n"+
+							"insert into mytesttable (user_id, user_name, gender) values ('010574', 'Bob', 'M') \n"+
+					"APPLY BATCH;";
+			Statement st = conn.createStatement();
+			//iResult = st.executeUpdate(data);
+			boolean flag = st.execute(data);
+			st.close();
+			System.out.println("共儲存成功 " + iResult + " 筆。" + flag);
 		} catch (SQLException se) {
 			se.printStackTrace();
 		}
@@ -266,7 +282,7 @@ public class CassandraJdbc3 {
 			
 			//updateData(jdbcConn);
 			
-			getData(jdbcConn);
+			//getData(jdbcConn);
 			
 			//---Table 系列---
 			//測試建立Table
@@ -276,7 +292,7 @@ public class CassandraJdbc3 {
 			//dropTable(jdbcConn, "myuserstable");
 			
 			//資料CUD會怎麼樣
-			//insertIntoData(jdbcConn);
+			insertIntoData(jdbcConn);
 			
 			//資料R會怎麼樣
 			//selectData(jdbcConn);

@@ -23,6 +23,7 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.transport.TFramedTransport;
 
 /**
+ * 使用Thrift API 測試
  * @author asus1
  *
  */
