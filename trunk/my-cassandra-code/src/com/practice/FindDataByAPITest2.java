@@ -27,10 +27,10 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 
 /**
- * 用來測試
- * 1.新增大量資料
- * 2.读取某条数据的单个字段(API)
- * 3.读取整条数据(API)
+ * 用來測試，API使用Thrift<br>
+ * 1.新增大量資料<br>
+ * 2.读取某条数据的单个字段(API)<br>
+ * 3.读取整条数据(API)<br>
  * @author asus1
  */
 public class FindDataByAPITest2 {
@@ -72,23 +72,35 @@ public class FindDataByAPITest2 {
 			
 			
 			String key3 = "a1";//读取key为a1的那条记录
-			key3 = "jsmith";//讀取key為jsmith的那條記錄
+			//key3 = "jsmith";//讀取key為jsmith的那條記錄
+			
 			/*
 			 * 读取某条数据的单个字段
 			 */
-			/*ColumnPath path = new ColumnPath("Student");//设置读取Student的数据
+			ColumnPath path = new ColumnPath("Student"); //设置读取Student的数据
+			//設定要查詢的欄位Key值
 			path.setColumn(toByteBuffer("id"));	//读取id
-			System.out.println(toString(client.get(toByteBuffer(key3), path, ConsistencyLevel.ONE).column.value));*/
+			try {
+				//第一種方式(簡)
+				System.out.println("读取某条数据的单个字段 ==> " + 
+						toString(client.get(toByteBuffer(key3), path, ConsistencyLevel.ONE).column.value));
+				//第二種方式(繁)
+				ColumnOrSuperColumn cos = client.get(toByteBuffer(key3), path, ConsistencyLevel.ONE);
+				System.out.println("读取某条数据的单个字段 ==> " + toString(cos.column.name) + " -> " + toString(cos.column.value));
+			} catch(NotFoundException notFindE) {
+				System.err.println("查無資料...");
+			}
 			
 			/*
 			 * 读取整条数据
 			 */
 			SlicePredicate predicate = new SlicePredicate();
+			//										new SliceRange(start, finiash, reversed(倒轉), count)
 			SliceRange sliceRange = new SliceRange(toByteBuffer(""), toByteBuffer(""), false, 10);
 			predicate.setSlice_range(sliceRange);
 			List<ColumnOrSuperColumn> results = 
 				client.get_slice(toByteBuffer(key3), parent, predicate, ConsistencyLevel.ONE);
-			System.out.println("查得資料筆數：" + results.size() + " 筆。");
+			System.out.println("读取整条数据，查得資料筆數：" + results.size() + " 筆。");
 			for (ColumnOrSuperColumn result : results)
 			{
 				Column column = result.column;
