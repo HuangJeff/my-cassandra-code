@@ -59,17 +59,41 @@ public class CassandraJdbc {
 	    }
 	}
 	
+	/**
+	 * 異動更新system下的cluster_name(測試如果有org.apache.cassandra.exceptions.ConfigurationException: Saved cluster name Test
+Cluster != configured name Cluster 的時候)
+	 * @param conn
+	 * @throws SQLException
+	 */
+	public static void updateClusterName(Connection conn) throws SQLException {
+		//String oldClusterName = "My Cluster";
+		String newClusterName = "Test Cluster";
+		Statement st = null;
+		try {
+			String updSql = "UPDATE system.local SET cluster_name = '" + newClusterName + "' where key='local'";
+			st = conn.createStatement();
+			int updInt = st.executeUpdate(updSql);
+			System.out.println("SQL =>" + updSql + "\n共更新 " + updInt + " 筆。");
+		} finally {
+			if(st != null)
+				st.close();
+		}
+	}
+	
 	public static void main(String[] args) {
 		Connection conn = null;
 		try {
 			Class.forName("org.apache.cassandra.cql.jdbc.CassandraDriver");
-		    conn = DriverManager.getConnection("jdbc:cassandra://localhost:9160/system");
+		    //conn = DriverManager.getConnection("jdbc:cassandra://localhost:9160/system");
+			conn = DriverManager.getConnection("jdbc:cassandra://192.168.137.102:9160/system");
 			
 		    //Table Name ： schema_keyspaces
 //		    getSystemTableInfo(conn, "schema_keyspaces");
 		    
 		    //Table Name ： local
 		    getSystemTableInfo(conn, "local");
+		    //update cluster_name
+		    //updateClusterName(conn);
 		    
 		  //Table Name ： peers
 //		    getSystemTableInfo(conn, "peers");
