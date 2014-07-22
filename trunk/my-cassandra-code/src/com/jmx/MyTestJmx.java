@@ -96,7 +96,7 @@ public class MyTestJmx {
 //	            		System.err.println(anfe.getMessage());
 //	            	}
 	            } else if(name.toString().startsWith("org.apache.cassandra.db")) {
-	            	//echo("\tObjectName = " + name);
+//	            	echo("\tObjectName = " + name);
 	            	
 //	            	try {
 //	            		Object o = mbsc.getAttribute(name, "Commitlog");
@@ -105,7 +105,9 @@ public class MyTestJmx {
 //	            		System.err.println(anfe.getMessage());
 //	            	}
 	            	
-	            	if(name.toString().equals("org.apache.cassandra.db:type=ColumnFamilies,keyspace=Keyspace1,columnfamily=Student")) {
+	            	String atStr = "org.apache.cassandra.db:type=ColumnFamilies,keyspace=Keyspace1,columnfamily=Student";
+	            	
+	            	if(name.toString().equals(atStr)) {
 	            		echo("\tObjectName = " + name);
 	            		
 	            		MBeanInfo mbi = mbsc.getMBeanInfo(name);
@@ -133,13 +135,8 @@ public class MyTestJmx {
 		            	}
 		            	echo("====================================");
 		            	
-	            	/*
-MBeanNotificationInfo[]	getNotifications()
-Returns the list of the notifications emitted by the MBean.
-MBeanOperationInfo[]	getOperations()
-Returns the list of operations of the MBean.
-	            	 */
 	            	}
+	            	
 //	            	try {
 //	            		Object o2 = mbsc.getAttribute(name, "LoadedClassCount");
 //	            		System.out.println("o2 is " + o2);
@@ -147,7 +144,22 @@ Returns the list of operations of the MBean.
 //	            		System.err.println(anfe.getMessage());
 //	            	}
 	            	
-	            }
+	            } else if(name.toString().startsWith("org.apache.cassandra.net")) {
+            		echo("\tObjectName = " + name);
+	            	
+            		MBeanInfo mbi = mbsc.getMBeanInfo(name);
+            		MBeanAttributeInfo[] aryOfmbeanA =	mbi.getAttributes();
+	            	for(MBeanAttributeInfo item : aryOfmbeanA) {
+	            		echo("Name: " + item.getName() + " Type:" + item.getType());
+	            		try {
+		            		Object o3 = mbsc.getAttribute(name, item.getName());
+		            		echo("●" + o3);
+	            		} catch(javax.management.AttributeNotFoundException anfe) {
+		            		System.err.println("Exception：" + anfe.getMessage());
+		            	}
+	            	}
+            	}
+	            
 	        }
 	        
 	        
