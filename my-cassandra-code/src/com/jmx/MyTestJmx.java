@@ -26,6 +26,7 @@ import com.jmx.test1.Client.ClientListener;
 public class MyTestJmx {
 
 	/**
+	 * port:7199 是Cassandra JMX的port
 	 * @param args
 	 * @category
 	 * 1.connector JMX service URL:service:jmx:rmi:///jndi/rmi://hostName:portNum/jmxrmi <br>
