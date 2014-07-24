@@ -24,7 +24,138 @@ import com.jmx.test1.Client.ClientListener;
  *
  */
 public class MyTestJmx {
-
+	
+	public static void displayJavaLang(MBeanServerConnection mbsc, ObjectName name) throws Exception {
+		echo("\t★ObjectName = " + name);
+    	
+    	/*
+    	 * 可以對應著JConsole的參數看，因為attribute每個MBean不一定都有，都相同
+    	 */
+    	Object o = mbsc.getAttribute(name, "ObjectName");
+    	echo("o is " + o);
+    	try {
+    		Object o2 = mbsc.getAttribute(name, "LoadedClassCount");
+    		echo("o2 is " + o2);
+    	} catch(javax.management.AttributeNotFoundException anfe) {
+    		System.err.println(anfe.getMessage());
+    	}
+    	
+    	echo("======================================");
+    	
+    	MBeanInfo mbi = mbsc.getMBeanInfo(name);
+		MBeanAttributeInfo[] aryOfmbeanA =	mbi.getAttributes();
+    	for(MBeanAttributeInfo item : aryOfmbeanA) {
+    		echo("Name: " + item.getName() + " Type:" + item.getType());
+    		try {
+        		Object o3 = mbsc.getAttribute(name, item.getName());
+        		echo("☆" + o3);
+    		} catch(javax.management.AttributeNotFoundException anfe) {
+        		System.err.println("AttributeNotFoundException：" + anfe.getMessage());
+        	} catch(Exception e) {
+        		System.err.println("Exception：" + e.getMessage());
+        	}
+    	}
+	}
+	
+	public static void displayJavaNio(MBeanServerConnection mbsc, ObjectName name) throws Exception {
+		echo("\t★ObjectName = " + name);
+    	
+    	/*
+    	 * 可以對應著JConsole的參數看，因為attribute每個MBean不一定都有，都相同
+    	 */
+    	Object o = mbsc.getAttribute(name, "ObjectName");
+    	echo("o is " + o);
+    	try {
+    		Object o2 = mbsc.getAttribute(name, "LoadedClassCount");
+    		echo("o2 is " + o2);
+    	} catch(javax.management.AttributeNotFoundException anfe) {
+    		System.err.println(anfe.getMessage());
+    	}
+    	
+    	echo("======================================");
+    	
+    	MBeanInfo mbi = mbsc.getMBeanInfo(name);
+		MBeanAttributeInfo[] aryOfmbeanA =	mbi.getAttributes();
+    	for(MBeanAttributeInfo item : aryOfmbeanA) {
+    		echo("Name: " + item.getName() + " Type:" + item.getType());
+    		try {
+        		Object o3 = mbsc.getAttribute(name, item.getName());
+        		echo("☆" + o3);
+    		} catch(javax.management.AttributeNotFoundException anfe) {
+        		System.err.println("AttributeNotFoundException：" + anfe.getMessage());
+        	} catch(Exception e) {
+        		System.err.println("Exception：" + e.getMessage());
+        	}
+    	}
+	}
+	
+	public static void displayCassandraDb(MBeanServerConnection mbsc, ObjectName name) throws Exception {
+		echo("\tObjectName = " + name);
+    	
+//    	try {
+//    		Object o = mbsc.getAttribute(name, "Commitlog");
+//    		echo("o is " + o);
+//    	} catch(javax.management.AttributeNotFoundException anfe) {
+//    		System.err.println(anfe.getMessage());
+//    	}
+    	
+    	String atStr = "org.apache.cassandra.db:type=ColumnFamilies,keyspace=Keyspace1,columnfamily=Student";
+    	
+    	if(name.toString().equals(atStr)) {
+    		echo("\tObjectName = " + name);
+    		
+    		MBeanInfo mbi = mbsc.getMBeanInfo(name);
+        	String className = mbi.getClassName();
+        	String description = mbi.getDescription();
+        	int hashCode = mbi.hashCode();
+        	
+        	echo("◎clzName=" + className + " description=" + description + " hCode=" + hashCode);
+        	
+        	MBeanAttributeInfo[] aryOfmbeanA =	mbi.getAttributes();
+        	for(MBeanAttributeInfo item : aryOfmbeanA) {
+        		echo("Name: " + item.getName() + " Type:" + item.getType());
+        		try {
+            		Object o3 = mbsc.getAttribute(name, item.getName());
+            		echo("◎" + o3);
+        		} catch(javax.management.AttributeNotFoundException anfe) {
+            		System.err.println("Exception：" + anfe.getMessage());
+            	}
+        	}
+        	
+        	echo("====================================");
+        	MBeanNotificationInfo[] aryOfmbeanN =	mbi.getNotifications();
+        	for(MBeanNotificationInfo item : aryOfmbeanN) {
+        		echo("Name: " + item.getName() + " Type:" + item.getNotifTypes());
+        	}
+        	echo("====================================");
+        	
+    	}
+    	
+//    	try {
+//    		Object o2 = mbsc.getAttribute(name, "LoadedClassCount");
+//    		System.out.println("o2 is " + o2);
+//    	} catch(javax.management.AttributeNotFoundException anfe) {
+//    		System.err.println(anfe.getMessage());
+//    	}
+	}
+	
+	public static void displayCassandraNet(MBeanServerConnection mbsc, ObjectName name) throws Exception {
+		echo("\tObjectName = " + name);
+    	
+		MBeanInfo mbi = mbsc.getMBeanInfo(name);
+		MBeanAttributeInfo[] aryOfmbeanA =	mbi.getAttributes();
+    	for(MBeanAttributeInfo item : aryOfmbeanA) {
+    		echo("Name: " + item.getName() + " Type:" + item.getType());
+    		try {
+        		Object o3 = mbsc.getAttribute(name, item.getName());
+        		echo("●" + o3);
+    		} catch(javax.management.AttributeNotFoundException anfe) {
+        		System.err.println("Exception：" + anfe.getMessage());
+        	}
+    	}
+	}
+	
+	
 	/**
 	 * port:7199 是Cassandra JMX的port
 	 * @param args
@@ -83,6 +214,9 @@ public class MyTestJmx {
 	        for (ObjectName name : names) {
 	            //echo("\tObjectName = " + name);
 	            if(name.toString().startsWith("java.lang")) {
+	            	
+//	            	displayJavaLang(mbsc, name);
+	            	
 	            	//echo("\tObjectName = " + name);
 	            	
 	            	/*
@@ -97,6 +231,10 @@ public class MyTestJmx {
 //	            		System.err.println(anfe.getMessage());
 //	            	}
 	            } else if(name.toString().startsWith("org.apache.cassandra.db")) {
+	            	
+//	            	displayCassandraDb(mbsc, name);
+	            	
+	            	/*
 //	            	echo("\tObjectName = " + name);
 	            	
 //	            	try {
@@ -144,9 +282,12 @@ public class MyTestJmx {
 //	            	} catch(javax.management.AttributeNotFoundException anfe) {
 //	            		System.err.println(anfe.getMessage());
 //	            	}
-	            	
+	            	*/
 	            } else if(name.toString().startsWith("org.apache.cassandra.net")) {
-            		echo("\tObjectName = " + name);
+	            	
+//	            	displayCassandraNet(mbsc, name);
+	            	
+            		/*echo("\tObjectName = " + name);
 	            	
             		MBeanInfo mbi = mbsc.getMBeanInfo(name);
             		MBeanAttributeInfo[] aryOfmbeanA =	mbi.getAttributes();
@@ -158,13 +299,15 @@ public class MyTestJmx {
 	            		} catch(javax.management.AttributeNotFoundException anfe) {
 		            		System.err.println("Exception：" + anfe.getMessage());
 		            	}
-	            	}
+	            	}*/
+            	} else if(name.toString().startsWith("java.nio")) {
+            		displayJavaNio(mbsc, name);
             	}
 	            
 	        }
 	        
 	        
-	        waitForEnterPressed();
+//	        waitForEnterPressed();
 			
 			
 			
