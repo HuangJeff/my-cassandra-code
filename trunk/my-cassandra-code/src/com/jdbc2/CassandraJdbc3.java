@@ -276,7 +276,7 @@ public class CassandraJdbc3 {
 			
 //			jdbcConn = getCassandraConn2();
 			
-			//createColumnFamily(jdbcConn);
+			createColumnFamily(jdbcConn);
 			
 			//pouplateData(jdbcConn);
 			

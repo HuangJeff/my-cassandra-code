@@ -53,8 +53,8 @@ public class FindDataByAPITest {
 		client.set_keyspace(KEYSPACE);
 		ColumnParent parent = new ColumnParent("Users");
 		
-		Column nameColumn = new Column().setName("name".getBytes());
-		nameColumn.setValue("Jeff".getBytes());
+		Column nameColumn = new Column().setName("age".getBytes());
+		nameColumn.setValue("18".getBytes());
 		nameColumn.setTimestamp(timestamp);
 		
 		client.insert(ByteBufferUtil.bytes(rowkeyId), parent, nameColumn, ConsistencyLevel.ONE);
@@ -127,10 +127,10 @@ public class FindDataByAPITest {
 	public static void main(String[] args) {
 		try {
 			// insert Data
-			//testInsertingColumn();
+			testInsertingColumn();
 			
 			//get Data
-			testGetColumnValue();
+			//testGetColumnValue();
 			
 			System.out.println("Finish...");
 		} catch(Exception e) {
