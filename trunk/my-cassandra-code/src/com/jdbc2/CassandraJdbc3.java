@@ -171,8 +171,13 @@ public class CassandraJdbc3 {
 		st.executeUpdate(t);
 	}
 	
-	public static void getData(Connection conn) throws Exception {
-		String t = "SELECT * FROM news";          
+	/**
+	 * Get Data From Table:news
+	 * @param conn
+	 * @throws Exception
+	 */
+	public static void getDataFromNews(Connection conn) throws Exception {
+		String t = "SELECT * FROM news";
 		Statement st = conn.createStatement();
 		ResultSet rs = st.executeQuery(t);
 		while(rs.next())
@@ -183,6 +188,47 @@ public class CassandraJdbc3 {
 				System.out.println(rs.getMetaData().getColumnName(j) + " : " +
 						rs.getString(rs.getMetaData().getColumnName(j)));
 			}
+		}
+	}
+	
+	/**
+	 * Get Data From Table:student
+	 * @param conn
+	 * @throws Exception
+	 * @java.sql.SQLSyntaxErrorException : unconfigured columnfamily student
+	 * 因為現有Table：Student，在下SQL查詢時[SELECT * FROM Student]會被轉置成小寫的[student]，
+	 * 造成查詢錯誤[SQLSyntaxErrorException : unconfigured columnfamily student]，因此From Table的部分要用雙引號包起來
+	 * 如："SELECT * FROM \"Student\""
+	 */
+	public static void getDataFromStudent(Connection conn) throws Exception {
+		String t = "SELECT * FROM \"Student\"";
+		String where = "limit 3";
+		//java.sql.SQLSyntaxErrorException: ORDER BY is only supported when the partition key is restricted by an EQ or an IN.
+		//where = " order by key";
+		
+		//SQLSyntaxErrorException: Predicates on the non-primary-key column (value) of a COMPACT table are not yet supported
+		//where = " where value = 45142";
+		
+		where = " where key = 'a29726'"; // It's work
+		
+		//SQLSyntaxErrorException: Undefined name sex in where clause ('sex = 'M'') 未建立Secondary Index之前
+		where = " where sex = 'M'"; //It's not work
+		
+		
+		
+		t += " " + where;
+		System.out.println("SQL:" + t);
+		Statement st = conn.createStatement();
+		ResultSet rs = st.executeQuery(t);
+		while(rs.next())
+		{
+			System.out.println(rs.getString("key"));
+			for(int j=1;j<rs.getMetaData().getColumnCount()+1;j++)
+			{
+				System.out.println(rs.getMetaData().getColumnName(j) + " : " +
+						rs.getString(rs.getMetaData().getColumnName(j)));
+			}
+			System.out.println("================================");
 		}
 	}
 	
@@ -276,13 +322,15 @@ public class CassandraJdbc3 {
 			
 //			jdbcConn = getCassandraConn2();
 			
-			createColumnFamily(jdbcConn);
+			//createColumnFamily(jdbcConn);
 			
 			//pouplateData(jdbcConn);
 			
 			//updateData(jdbcConn);
 			
-			//getData(jdbcConn);
+			//getDataFromNews(jdbcConn);
+			
+			getDataFromStudent(jdbcConn);
 			
 			//---Table 系列---
 			//測試建立Table
@@ -292,7 +340,7 @@ public class CassandraJdbc3 {
 			//dropTable(jdbcConn, "myuserstable");
 			
 			//資料CUD會怎麼樣
-			insertIntoData(jdbcConn);
+			//insertIntoData(jdbcConn);
 			
 			//資料R會怎麼樣
 			//selectData(jdbcConn);
