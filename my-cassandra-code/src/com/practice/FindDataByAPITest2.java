@@ -20,6 +20,7 @@ import org.apache.cassandra.thrift.SliceRange;
 import org.apache.cassandra.thrift.TBinaryProtocol;
 import org.apache.cassandra.thrift.TimedOutException;
 import org.apache.cassandra.thrift.UnavailableException;
+import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TFramedTransport;
@@ -69,6 +70,9 @@ public class FindDataByAPITest2 {
 			
 			//新增大量測試資料
 			//this.createData(client, parent);
+			
+			//Create Sex 與 Age 兩個欄位
+			//this.createSexColumn(client, parent);
 			
 			
 			String key3 = "a1";//读取key为a1的那条记录
@@ -159,6 +163,36 @@ public class FindDataByAPITest2 {
 		System.out.println("Create Data time: " + (temp2 - temp) + " ms");	//Create 10萬筆資料所秏費時間
 	}
 	
+	/**
+	 * 針對10万条数据Student，新增Column:Sex(要用來測試 Secondary Index)
+	 * 每条数据包括id和name
+	 * @throws Exception
+	 */
+	public void createSexColumn(Cassandra.Client client, ColumnParent parent) throws Exception {
+		long temp = System.currentTimeMillis();
+		String sex = "M";
+		String key_user_id = "a";
+		for(int i = 0;i < 100000;i++)
+		{
+			String k = key_user_id + i;//key
+			long timestamp = System.currentTimeMillis();//时间戳
+			
+			Column nameColumn = new Column(toByteBuffer("sex"));//column name
+			if(i % 2 == 1) sex = "F";
+			else sex = "M";
+			nameColumn.setValue(toByteBuffer(sex));//column value
+			nameColumn.setTimestamp(timestamp);
+			client.insert(
+				toByteBuffer(k), 
+				parent, 
+				nameColumn, 
+				ConsistencyLevel.ONE);
+		}
+		
+		long temp2 = System.currentTimeMillis();
+		
+		System.out.println("Create Column time: " + (temp2 - temp) + " ms");
+	}
 	
 	/*
 	 * 将String转换为bytebuffer，以便插入cassandra

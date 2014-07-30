@@ -80,18 +80,68 @@ Cluster != configured name Cluster 的時候)
 		}
 	}
 	
+	/**
+	 * You can retrieve primary keys and secondary indexes using the system keyspace
+	 * @param conn
+	 * @throws SQLException
+	 */
+	public static void primaryKeyAndSecondaryKey(Connection conn) throws SQLException {
+		PreparedStatement statement = null;
+//		String sql = "SELECT column_name, index_name, index_options, index_type, component_index "
+//				+ "FROM system.schema_columns ";
+		String sql = "SELECT * "
+				+ "FROM system.schema_columns "
+				+ " where keyspace_name = 'Keyspace1' "
+				//+ "and columnfamily_name = 'Student' "
+				;
+		List<String> columnList = new ArrayList<String>();
+		try {
+			statement = conn.prepareStatement(sql);
+		    ResultSet rs = statement.executeQuery();
+		    
+		    ResultSetMetaData rsmd = rs.getMetaData();
+		    for(int i = 1;i<= rsmd.getColumnCount();i++) {
+		    	String columnName = rsmd.getColumnName(i);
+		    	columnList.add(columnName);
+		    }
+		    for(String colName : columnList) {
+	        	System.out.print(colName);
+	        	System.out.print("\t");
+	        }
+		    
+		    System.out.print("\n");
+		    
+		    while(rs.next()) {
+		    	System.out.print(
+		    			rs.getString("keyspace_name") +
+		    			"\t" +rs.getString("columnfamily_name") +
+		    			"\t" +rs.getString("column_name") +
+		    			"\t" +rs.getString("component_index") +
+		    			"\t" +rs.getString("index_name") +
+		    			"\t" +rs.getString("index_options") +
+		    			"\t" +rs.getString("index_type") +
+//		    			"\t" +rs.getString("type") +
+//		    			"\t" +rs.getString("validator") +
+		    			"\n");
+		    }
+		} finally {
+			
+			if(statement != null) statement.close();
+		}
+	}
+	
 	public static void main(String[] args) {
 		Connection conn = null;
 		try {
 			Class.forName("org.apache.cassandra.cql.jdbc.CassandraDriver");
-		    //conn = DriverManager.getConnection("jdbc:cassandra://localhost:9160/system");
-			conn = DriverManager.getConnection("jdbc:cassandra://192.168.137.102:9160/system");
+		    conn = DriverManager.getConnection("jdbc:cassandra://localhost:9160/system");
+			//conn = DriverManager.getConnection("jdbc:cassandra://192.168.137.102:9160/system");
 			
 		    //Table Name ： schema_keyspaces
 //		    getSystemTableInfo(conn, "schema_keyspaces");
 		    
 		    //Table Name ： local
-		    getSystemTableInfo(conn, "local");
+		    //getSystemTableInfo(conn, "local");
 		    //update cluster_name
 		    //updateClusterName(conn);
 		    
@@ -103,6 +153,11 @@ Cluster != configured name Cluster 的時候)
 		    
 		  //Table Name ： schema_columnfamilies
 //		    getSystemTableInfo(conn, "schema_columnfamilies");
+		    
+		    //primary keys and secondary indexes
+		    primaryKeyAndSecondaryKey(conn);
+		    
+		    
 			
 		} catch(Exception e) {
 			e.printStackTrace();

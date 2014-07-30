@@ -34,7 +34,7 @@ public class CassandraJdbc2 {
 			//TTransport tr = new TFramedTransport(new TSocket("localhost", 9160));
 			TTransport tr = new TFramedTransport(new TSocket("192.168.137.101", 9160));
 			
-			 tr.open();
+			tr.open();
 			
 	        TProtocol proto = new TBinaryProtocol(tr);
 	        Cassandra.Client client = new Cassandra.Client(proto);
