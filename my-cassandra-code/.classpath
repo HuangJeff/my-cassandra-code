@@ -14,5 +14,11 @@
 	<classpathentry kind="lib" path="lib/cassandra-all-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/guava-15.0.jar"/>
 	<classpathentry kind="lib" path="lib/jmockit.jar"/>
+	<classpathentry kind="lib" path="lib/apache-cassandra-1.1.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/snakeyaml-1.9.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-all-1.9.9.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/super-csv-2.1.0.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
